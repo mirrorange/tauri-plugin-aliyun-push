@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mirrorange.plugin.aliyun-push"
+    namespace = "com.plugin.aliyunpush"
     compileSdk = 36
 
     defaultConfig {
@@ -12,6 +12,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // NDK configurations for Aliyun Push SDK
+        ndk {
+            abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64"))
+        }
     }
 
     buildTypes {
@@ -41,4 +46,7 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation(project(":tauri-android"))
+    
+    // Aliyun Push SDK dependencies
+    implementation("com.aliyun.ams:alicloud-android-push:3.9.0")
 }

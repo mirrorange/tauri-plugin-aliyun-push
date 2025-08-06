@@ -35,7 +35,16 @@ impl<R: Runtime, T: Manager<R>> crate::AliyunPushExt<R> for T {
 /// Initializes the plugin.
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
   Builder::new("aliyun-push")
-    .invoke_handler(tauri::generate_handler![commands::ping])
+    .invoke_handler(tauri::generate_handler![
+      commands::initialize,
+      commands::get_device_id,
+      commands::bind_account,
+      commands::unbind_account,
+      commands::bind_tag,
+      commands::unbind_tag,
+      commands::bind_alias,
+      commands::unbind_alias,
+    ])
     .setup(|app, api| {
       #[cfg(mobile)]
       let aliyun_push = mobile::init(app, api)?;

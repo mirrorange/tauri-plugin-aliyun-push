@@ -15,7 +15,7 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
   api: PluginApi<R, C>,
 ) -> crate::Result<AliyunPush<R>> {
   #[cfg(target_os = "android")]
-  let handle = api.register_android_plugin("com.mirrorange.plugin.aliyun-push", "ExamplePlugin")?;
+  let handle = api.register_android_plugin("com.plugin.aliyunpush", "AliyunPushPlugin")?;
   #[cfg(target_os = "ios")]
   let handle = api.register_ios_plugin(init_plugin_aliyun_push)?;
   Ok(AliyunPush(handle))
@@ -25,10 +25,59 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct AliyunPush<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> AliyunPush<R> {
-  pub fn ping(&self, payload: PingRequest) -> crate::Result<PingResponse> {
+  pub fn initialize(&self, config: InitializeConfig) -> crate::Result<InitializeResponse> {
     self
       .0
-      .run_mobile_plugin("ping", payload)
+      .run_mobile_plugin("initialize", config)
+      .map_err(Into::into)
+  }
+  
+  pub fn get_device_id(&self) -> crate::Result<DeviceIdResponse> {
+    self
+      .0
+      .run_mobile_plugin("getDeviceId", ())
+      .map_err(Into::into)
+  }
+  
+  pub fn bind_account(&self, account: String) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("bindAccount", AccountRequest { account })
+      .map_err(Into::into)
+  }
+  
+  pub fn unbind_account(&self) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("unbindAccount", ())
+      .map_err(Into::into)
+  }
+  
+  pub fn bind_tag(&self, request: TagRequest) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("bindTag", request)
+      .map_err(Into::into)
+  }
+  
+  pub fn unbind_tag(&self, request: TagRequest) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("unbindTag", request)
+      .map_err(Into::into)
+  }
+  
+  pub fn bind_alias(&self, alias: String) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("bindAlias", AliasRequest { alias })
+      .map_err(Into::into)
+  }
+  
+  pub fn unbind_alias(&self, alias: String) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("unbindAlias", AliasRequest { alias })
       .map_err(Into::into)
   }
 }

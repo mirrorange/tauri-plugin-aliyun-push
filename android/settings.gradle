@@ -23,7 +23,13 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         google()
-
+        maven {
+            url 'https://maven.aliyun.com/nexus/content/repositories/releases/'
+        }
+        // HMS Core SDK Maven repo for Huawei channel if needed in the future
+        maven {
+            url 'https://developer.huawei.com/repo/'
+        }
     }
 }
 

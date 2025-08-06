@@ -1,8 +1,6 @@
 use serde::de::DeserializeOwned;
 use tauri::{plugin::PluginApi, AppHandle, Runtime};
 
-use crate::models::*;
-
 pub fn init<R: Runtime, C: DeserializeOwned>(
   app: &AppHandle<R>,
   _api: PluginApi<R, C>,
@@ -14,9 +12,6 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct AliyunPush<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> AliyunPush<R> {
-  pub fn ping(&self, payload: PingRequest) -> crate::Result<PingResponse> {
-    Ok(PingResponse {
-      value: payload.value,
-    })
-  }
+  // Desktop platform doesn't support push notifications
+  // All methods will return errors when called from desktop
 }
