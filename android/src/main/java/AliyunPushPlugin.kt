@@ -33,8 +33,10 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun initialize(invoke: Invoke) {
-        appKey = invoke.getString("appKey")
-        appSecret = invoke.getString("appSecret")
+        val args = invoke.getObject() ?: JSObject()
+        
+        appKey = args.getString("appKey")
+        appSecret = args.getString("appSecret")
         
         if (appKey.isNullOrEmpty() || appSecret.isNullOrEmpty()) {
             invoke.reject("AppKey and AppSecret are required")
@@ -105,7 +107,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val account = invoke.getString("account")
+        val args = invoke.getObject() ?: JSObject()
+        val account = args.getString("account")
+        
         if (account.isNullOrEmpty()) {
             invoke.reject("Account is required")
             return
@@ -157,7 +161,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val tagsArray = invoke.getArray("tags")
+        val args = invoke.getObject() ?: JSObject()
+        val tagsArray = args.getJSArray("tags")
+        
         if (tagsArray == null || tagsArray.length() == 0) {
             invoke.reject("Tags are required")
             return
@@ -169,11 +175,11 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
         }
         
         val target = try {
-            invoke.getInteger("target") ?: CloudPushService.DEVICE_TARGET
+            args.getInteger("target") ?: CloudPushService.DEVICE_TARGET
         } catch (e: Exception) {
             CloudPushService.DEVICE_TARGET
         }
-        val alias = invoke.getString("alias")
+        val alias = args.getString("alias")
         
         pushService?.bindTag(target, tags.toTypedArray(), alias, object : CommonCallback {
             override fun onSuccess(response: String?) {
@@ -198,7 +204,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val tagsArray = invoke.getArray("tags")
+        val args = invoke.getObject() ?: JSObject()
+        val tagsArray = args.getJSArray("tags")
+        
         if (tagsArray == null || tagsArray.length() == 0) {
             invoke.reject("Tags are required")
             return
@@ -210,11 +218,11 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
         }
         
         val target = try {
-            invoke.getInteger("target") ?: CloudPushService.DEVICE_TARGET
+            args.getInteger("target") ?: CloudPushService.DEVICE_TARGET
         } catch (e: Exception) {
             CloudPushService.DEVICE_TARGET
         }
-        val alias = invoke.getString("alias")
+        val alias = args.getString("alias")
         
         pushService?.unbindTag(target, tags.toTypedArray(), alias, object : CommonCallback {
             override fun onSuccess(response: String?) {
@@ -239,7 +247,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val alias = invoke.getString("alias")
+        val args = invoke.getObject() ?: JSObject()
+        val alias = args.getString("alias")
+        
         if (alias.isNullOrEmpty()) {
             invoke.reject("Alias is required")
             return
@@ -268,7 +278,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val alias = invoke.getString("alias")
+        val args = invoke.getObject() ?: JSObject()
+        val alias = args.getString("alias")
+        
         if (alias.isNullOrEmpty()) {
             invoke.reject("Alias is required")
             return
@@ -297,8 +309,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
+        val args = invoke.getObject() ?: JSObject()
         val target = try {
-            invoke.getInteger("target") ?: CloudPushService.DEVICE_TARGET
+            args.getInteger("target") ?: CloudPushService.DEVICE_TARGET
         } catch (e: Exception) {
             CloudPushService.DEVICE_TARGET
         }
