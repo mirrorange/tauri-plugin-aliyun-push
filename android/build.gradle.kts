@@ -48,5 +48,5 @@ dependencies {
     implementation(project(":tauri-android"))
     
     // Aliyun Push SDK dependencies
-    implementation("com.aliyun.ams:alicloud-android-push:3.9.0")
+    implementation("com.aliyun.ams:alicloud-android-push:3.9.5")
 }

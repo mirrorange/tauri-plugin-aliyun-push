@@ -65,10 +65,8 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             PushServiceFactory.init(pushInitConfig)
             pushService = PushServiceFactory.getCloudPushService()
             
-            // Enable debug logging in debug builds
-            if (BuildConfig.DEBUG) {
-                pushService?.setLogLevel(CloudPushService.LOG_DEBUG)
-            }
+            // Enable debug logging
+            pushService?.setLogLevel(CloudPushService.LOG_DEBUG)
             
             // Register with push service
             pushService?.register(activity.applicationContext, object : CommonCallback {
