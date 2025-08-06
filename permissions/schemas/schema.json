@@ -295,6 +295,90 @@
       "type": "string",
       "oneOf": [
         {
+          "description": "Enables the bind_account command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-bind-account",
+          "markdownDescription": "Enables the bind_account command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the bind_account command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-bind-account",
+          "markdownDescription": "Denies the bind_account command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the bind_alias command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-bind-alias",
+          "markdownDescription": "Enables the bind_alias command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the bind_alias command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-bind-alias",
+          "markdownDescription": "Denies the bind_alias command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the bind_tag command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-bind-tag",
+          "markdownDescription": "Enables the bind_tag command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the bind_tag command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-bind-tag",
+          "markdownDescription": "Denies the bind_tag command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the check_push_channel_status command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-check-push-channel-status",
+          "markdownDescription": "Enables the check_push_channel_status command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the check_push_channel_status command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-check-push-channel-status",
+          "markdownDescription": "Denies the check_push_channel_status command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the get_device_id command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-get-device-id",
+          "markdownDescription": "Enables the get_device_id command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the get_device_id command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-get-device-id",
+          "markdownDescription": "Denies the get_device_id command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the initialize command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-initialize",
+          "markdownDescription": "Enables the initialize command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the initialize command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-initialize",
+          "markdownDescription": "Denies the initialize command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the list_tags command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-tags",
+          "markdownDescription": "Enables the list_tags command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the list_tags command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-tags",
+          "markdownDescription": "Denies the list_tags command without any pre-configured scope."
+        },
+        {
           "description": "Enables the ping command without any pre-configured scope.",
           "type": "string",
           "const": "allow-ping",
@@ -307,10 +391,82 @@
           "markdownDescription": "Denies the ping command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-ping`",
+          "description": "Enables the request_notification_permission command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-request-notification-permission",
+          "markdownDescription": "Enables the request_notification_permission command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the request_notification_permission command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-request-notification-permission",
+          "markdownDescription": "Denies the request_notification_permission command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the turn_off_push_channel command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-turn-off-push-channel",
+          "markdownDescription": "Enables the turn_off_push_channel command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the turn_off_push_channel command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-turn-off-push-channel",
+          "markdownDescription": "Denies the turn_off_push_channel command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the turn_on_push_channel command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-turn-on-push-channel",
+          "markdownDescription": "Enables the turn_on_push_channel command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the turn_on_push_channel command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-turn-on-push-channel",
+          "markdownDescription": "Denies the turn_on_push_channel command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the unbind_account command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-unbind-account",
+          "markdownDescription": "Enables the unbind_account command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the unbind_account command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-unbind-account",
+          "markdownDescription": "Denies the unbind_account command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the unbind_alias command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-unbind-alias",
+          "markdownDescription": "Enables the unbind_alias command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the unbind_alias command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-unbind-alias",
+          "markdownDescription": "Denies the unbind_alias command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the unbind_tag command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-unbind-tag",
+          "markdownDescription": "Enables the unbind_tag command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the unbind_tag command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-unbind-tag",
+          "markdownDescription": "Denies the unbind_tag command without any pre-configured scope."
+        },
+        {
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-initialize`\n- `allow-get-device-id`\n- `allow-bind-account`\n- `allow-unbind-account`\n- `allow-bind-tag`\n- `allow-unbind-tag`\n- `allow-bind-alias`\n- `allow-unbind-alias`\n- `allow-list-tags`\n- `allow-turn-on-push-channel`\n- `allow-turn-off-push-channel`\n- `allow-check-push-channel-status`\n- `allow-request-notification-permission`",
           "type": "string",
           "const": "default",
-          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-ping`"
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-initialize`\n- `allow-get-device-id`\n- `allow-bind-account`\n- `allow-unbind-account`\n- `allow-bind-tag`\n- `allow-unbind-tag`\n- `allow-bind-alias`\n- `allow-unbind-alias`\n- `allow-list-tags`\n- `allow-turn-on-push-channel`\n- `allow-turn-off-push-channel`\n- `allow-check-push-channel-status`\n- `allow-request-notification-permission`"
         }
       ]
     }

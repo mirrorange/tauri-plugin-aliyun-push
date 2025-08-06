@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-bind-account"
+description = "Enables the bind_account command without any pre-configured scope."
+commands.allow = ["bind_account"]
+
+[[permission]]
+identifier = "deny-bind-account"
+description = "Denies the bind_account command without any pre-configured scope."
+commands.deny = ["bind_account"]

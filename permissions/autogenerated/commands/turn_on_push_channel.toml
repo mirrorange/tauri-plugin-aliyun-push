@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-turn-on-push-channel"
+description = "Enables the turn_on_push_channel command without any pre-configured scope."
+commands.allow = ["turn_on_push_channel"]
+
+[[permission]]
+identifier = "deny-turn-on-push-channel"
+description = "Denies the turn_on_push_channel command without any pre-configured scope."
+commands.deny = ["turn_on_push_channel"]

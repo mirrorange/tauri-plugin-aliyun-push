@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-unbind-alias"
+description = "Enables the unbind_alias command without any pre-configured scope."
+commands.allow = ["unbind_alias"]
+
+[[permission]]
+identifier = "deny-unbind-alias"
+description = "Denies the unbind_alias command without any pre-configured scope."
+commands.deny = ["unbind_alias"]

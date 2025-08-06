@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-check-push-channel-status"
+description = "Enables the check_push_channel_status command without any pre-configured scope."
+commands.allow = ["check_push_channel_status"]
+
+[[permission]]
+identifier = "deny-check-push-channel-status"
+description = "Denies the check_push_channel_status command without any pre-configured scope."
+commands.deny = ["check_push_channel_status"]
