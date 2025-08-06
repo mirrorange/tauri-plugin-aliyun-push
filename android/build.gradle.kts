@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mirrorange.plugin.aliyun-push"
+    namespace = "com.mirrorange.plugin.aliyunpush"
     compileSdk = 36
 
     defaultConfig {

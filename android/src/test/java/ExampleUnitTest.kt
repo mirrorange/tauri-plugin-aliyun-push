@@ -1,4 +1,4 @@
-package com.mirrorange.plugin.aliyun-push
+package com.mirrorange.plugin.aliyunpush
 
 import org.junit.Test
 
