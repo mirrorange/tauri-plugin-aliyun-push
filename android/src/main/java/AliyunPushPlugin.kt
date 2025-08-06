@@ -445,29 +445,29 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
 
 // Data classes for command arguments
 @InvokeArg
-data class InitializeArgs(
-    val appKey: String,
-    val appSecret: String
-)
+class InitializeArgs {
+    lateinit var appKey: String
+    lateinit var appSecret: String
+}
 
 @InvokeArg
-data class AccountArgs(
-    val account: String
-)
+class AccountArgs {
+    lateinit var account: String
+}
 
 @InvokeArg
-data class AliasArgs(
-    val alias: String
-)
+class AliasArgs {
+    lateinit var alias: String
+}
 
 @InvokeArg
-data class TagsArgs(
-    val tags: List<String>,
-    val target: Int? = null,
-    val alias: String? = null
-)
+class TagsArgs {
+    lateinit var tags: List<String>
+    var target: Int? = null
+    var alias: String? = null
+}
 
 @InvokeArg
-data class TargetArgs(
-    val target: Int? = null
-)
+class TargetArgs {
+    var target: Int? = null
+}
