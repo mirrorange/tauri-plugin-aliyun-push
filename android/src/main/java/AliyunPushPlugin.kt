@@ -1,4 +1,4 @@
-package com.plugin.aliyunpush
+package com.mirrorange.plugin.aliyun-push
 
 import android.app.Activity
 import android.app.Application

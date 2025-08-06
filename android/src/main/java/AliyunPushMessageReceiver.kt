@@ -1,4 +1,4 @@
-package com.plugin.aliyunpush
+package com.mirrorange.plugin.aliyun-push
 
 import android.content.Context
 import android.util.Log
@@ -108,7 +108,7 @@ class AliyunPushMessageReceiver : MessageReceiver() {
         try {
             // Try to get the plugin instance and notify it
             // This is a simplified approach - in production you might want to use a more robust method
-            val pluginClass = Class.forName("com.plugin.aliyunpush.AliyunPushPlugin")
+            val pluginClass = Class.forName("com.mirrorange.plugin.aliyun-push.AliyunPushPlugin")
             val companionField = pluginClass.getDeclaredField("Companion")
             companionField.isAccessible = true
             val companion = companionField.get(null)
