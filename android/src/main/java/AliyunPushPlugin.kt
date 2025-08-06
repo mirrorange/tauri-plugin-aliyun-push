@@ -36,8 +36,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     fun initialize(invoke: Invoke) {
         try {
             // In Tauri V2, arguments are passed as properties on the invoke object
-            appKey = invoke.parseArgs(InitializeArgs::class.java)?.appKey
-            appSecret = invoke.parseArgs(InitializeArgs::class.java)?.appSecret
+            val args = invoke.parseArgs(InitializeArgs::class.java)
+            appKey = args?.appKey
+            appSecret = args?.appSecret
             
             if (appKey.isNullOrEmpty() || appSecret.isNullOrEmpty()) {
                 invoke.reject("AppKey and AppSecret are required")
@@ -443,25 +444,30 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
 }
 
 // Data classes for command arguments
+@InvokeArg
 data class InitializeArgs(
     val appKey: String,
     val appSecret: String
 )
 
+@InvokeArg
 data class AccountArgs(
     val account: String
 )
 
+@InvokeArg
 data class AliasArgs(
     val alias: String
 )
 
+@InvokeArg
 data class TagsArgs(
     val tags: List<String>,
     val target: Int? = null,
     val alias: String? = null
 )
 
+@InvokeArg
 data class TargetArgs(
     val target: Int? = null
 )
