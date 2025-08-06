@@ -11,6 +11,7 @@ import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
+import app.tauri.plugin.JSArray
 import com.alibaba.sdk.android.push.CloudPushService
 import com.alibaba.sdk.android.push.CommonCallback
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory
@@ -30,16 +31,9 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
         private var pushCallback: ((String, String?, Map<String, String>?) -> Unit)? = null
     }
     
-    override fun load() {
-        Log.d(TAG, "AliyunPushPlugin loaded")
-    }
-    
     @Command
     fun initialize(invoke: Invoke) {
-        val args = invoke.getObject() ?: run {
-            invoke.reject("Missing arguments")
-            return
-        }
+        val args = invoke.data
         
         appKey = args.getString("appKey")
         appSecret = args.getString("appSecret")
@@ -113,7 +107,8 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val account = invoke.getString("account") ?: run {
+        val account = invoke.data.getString("account")
+        if (account.isNullOrEmpty()) {
             invoke.reject("Account is required")
             return
         }
@@ -164,7 +159,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val tagsArray = invoke.getArray("tags")
+        val tagsArray = invoke.data.getJSArray("tags")
         if (tagsArray == null || tagsArray.length() == 0) {
             invoke.reject("Tags are required")
             return
@@ -175,10 +170,14 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             tags.add(tagsArray.getString(i))
         }
         
-        val target = invoke.getInteger("target", CloudPushService.DEVICE_TARGET)
-        val alias = invoke.getString("alias")
+        val target = try {
+            invoke.data.getInteger("target") ?: CloudPushService.DEVICE_TARGET
+        } catch (e: Exception) {
+            CloudPushService.DEVICE_TARGET
+        }
+        val alias = invoke.data.getString("alias")
         
-        pushService?.bindTag(target!!, tags.toTypedArray(), alias, object : CommonCallback {
+        pushService?.bindTag(target, tags.toTypedArray(), alias, object : CommonCallback {
             override fun onSuccess(response: String?) {
                 Log.d(TAG, "Tags bound successfully: $response")
                 val result = JSObject()
@@ -201,7 +200,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val tagsArray = invoke.getArray("tags")
+        val tagsArray = invoke.data.getJSArray("tags")
         if (tagsArray == null || tagsArray.length() == 0) {
             invoke.reject("Tags are required")
             return
@@ -212,10 +211,14 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             tags.add(tagsArray.getString(i))
         }
         
-        val target = invoke.getInteger("target", CloudPushService.DEVICE_TARGET)
-        val alias = invoke.getString("alias")
+        val target = try {
+            invoke.data.getInteger("target") ?: CloudPushService.DEVICE_TARGET
+        } catch (e: Exception) {
+            CloudPushService.DEVICE_TARGET
+        }
+        val alias = invoke.data.getString("alias")
         
-        pushService?.unbindTag(target!!, tags.toTypedArray(), alias, object : CommonCallback {
+        pushService?.unbindTag(target, tags.toTypedArray(), alias, object : CommonCallback {
             override fun onSuccess(response: String?) {
                 Log.d(TAG, "Tags unbound successfully: $response")
                 val result = JSObject()
@@ -238,7 +241,8 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val alias = invoke.getString("alias") ?: run {
+        val alias = invoke.data.getString("alias")
+        if (alias.isNullOrEmpty()) {
             invoke.reject("Alias is required")
             return
         }
@@ -266,7 +270,8 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val alias = invoke.getString("alias") ?: run {
+        val alias = invoke.data.getString("alias")
+        if (alias.isNullOrEmpty()) {
             invoke.reject("Alias is required")
             return
         }
@@ -294,9 +299,13 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val target = invoke.getInteger("target", CloudPushService.DEVICE_TARGET)
+        val target = try {
+            invoke.data.getInteger("target") ?: CloudPushService.DEVICE_TARGET
+        } catch (e: Exception) {
+            CloudPushService.DEVICE_TARGET
+        }
         
-        pushService?.listTags(target!!, object : CommonCallback {
+        pushService?.listTags(target, object : CommonCallback {
             override fun onSuccess(response: String?) {
                 Log.d(TAG, "Tags listed successfully: $response")
                 val result = JSObject()
