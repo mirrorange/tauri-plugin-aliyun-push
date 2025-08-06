@@ -7,6 +7,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import app.tauri.annotation.Command
+import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
@@ -33,28 +34,27 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun initialize(invoke: Invoke) {
-        val args = invoke.getObject() ?: JSObject()
-        
-        appKey = args.getString("appKey")
-        appSecret = args.getString("appSecret")
-        
-        if (appKey.isNullOrEmpty() || appSecret.isNullOrEmpty()) {
-            invoke.reject("AppKey and AppSecret are required")
-            return
-        }
-        
-        val application = activity.application
-        
-        // Configure push initialization
-        val pushInitConfig = PushInitConfig.Builder()
-            .application(application)
-            .appKey(appKey)
-            .appSecret(appSecret)
-            .disableChannelProcess(false)
-            .disableChannelProcessHeartbeat(false)
-            .build()
-        
         try {
+            // In Tauri V2, arguments are passed as properties on the invoke object
+            appKey = invoke.parseArgs(InitializeArgs::class.java)?.appKey
+            appSecret = invoke.parseArgs(InitializeArgs::class.java)?.appSecret
+            
+            if (appKey.isNullOrEmpty() || appSecret.isNullOrEmpty()) {
+                invoke.reject("AppKey and AppSecret are required")
+                return
+            }
+            
+            val application = activity.application
+            
+            // Configure push initialization
+            val pushInitConfig = PushInitConfig.Builder()
+                .application(application)
+                .appKey(appKey)
+                .appSecret(appSecret)
+                .disableChannelProcess(false)
+                .disableChannelProcessHeartbeat(false)
+                .build()
+            
             // Initialize Push SDK
             PushServiceFactory.init(pushInitConfig)
             pushService = PushServiceFactory.getCloudPushService()
@@ -107,28 +107,32 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val args = invoke.getObject() ?: JSObject()
-        val account = args.getString("account")
-        
-        if (account.isNullOrEmpty()) {
-            invoke.reject("Account is required")
-            return
-        }
-        
-        pushService?.bindAccount(account, object : CommonCallback {
-            override fun onSuccess(response: String?) {
-                Log.d(TAG, "Account bound successfully: $response")
-                val result = JSObject()
-                result.put("success", true)
-                result.put("response", response ?: "")
-                invoke.resolve(result)
+        try {
+            val account = invoke.parseArgs(AccountArgs::class.java)?.account
+            
+            if (account.isNullOrEmpty()) {
+                invoke.reject("Account is required")
+                return
             }
             
-            override fun onFailed(errorCode: String?, errorMessage: String?) {
-                Log.e(TAG, "Failed to bind account: $errorCode - $errorMessage")
-                invoke.reject("Failed to bind account: $errorCode - $errorMessage")
-            }
-        })
+            pushService?.bindAccount(account, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Account bound successfully: $response")
+                    val result = JSObject()
+                    result.put("success", true)
+                    result.put("response", response ?: "")
+                    invoke.resolve(result)
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Failed to bind account: $errorCode - $errorMessage")
+                    invoke.reject("Failed to bind account: $errorCode - $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse arguments", e)
+            invoke.reject("Invalid arguments: ${e.message}")
+        }
     }
     
     @Command
@@ -161,40 +165,35 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val args = invoke.getObject() ?: JSObject()
-        val tagsArray = args.getJSArray("tags")
-        
-        if (tagsArray == null || tagsArray.length() == 0) {
-            invoke.reject("Tags are required")
-            return
-        }
-        
-        val tags = mutableListOf<String>()
-        for (i in 0 until tagsArray.length()) {
-            tags.add(tagsArray.getString(i))
-        }
-        
-        val target = try {
-            args.getInteger("target") ?: CloudPushService.DEVICE_TARGET
-        } catch (e: Exception) {
-            CloudPushService.DEVICE_TARGET
-        }
-        val alias = args.getString("alias")
-        
-        pushService?.bindTag(target, tags.toTypedArray(), alias, object : CommonCallback {
-            override fun onSuccess(response: String?) {
-                Log.d(TAG, "Tags bound successfully: $response")
-                val result = JSObject()
-                result.put("success", true)
-                result.put("response", response ?: "")
-                invoke.resolve(result)
+        try {
+            val args = invoke.parseArgs(TagsArgs::class.java)
+            
+            if (args?.tags.isNullOrEmpty()) {
+                invoke.reject("Tags are required")
+                return
             }
             
-            override fun onFailed(errorCode: String?, errorMessage: String?) {
-                Log.e(TAG, "Failed to bind tags: $errorCode - $errorMessage")
-                invoke.reject("Failed to bind tags: $errorCode - $errorMessage")
-            }
-        })
+            val target = args.target ?: CloudPushService.DEVICE_TARGET
+            val alias = args.alias
+            
+            pushService?.bindTag(target, args.tags.toTypedArray(), alias, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Tags bound successfully: $response")
+                    val result = JSObject()
+                    result.put("success", true)
+                    result.put("response", response ?: "")
+                    invoke.resolve(result)
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Failed to bind tags: $errorCode - $errorMessage")
+                    invoke.reject("Failed to bind tags: $errorCode - $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse arguments", e)
+            invoke.reject("Invalid arguments: ${e.message}")
+        }
     }
     
     @Command
@@ -204,40 +203,35 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val args = invoke.getObject() ?: JSObject()
-        val tagsArray = args.getJSArray("tags")
-        
-        if (tagsArray == null || tagsArray.length() == 0) {
-            invoke.reject("Tags are required")
-            return
-        }
-        
-        val tags = mutableListOf<String>()
-        for (i in 0 until tagsArray.length()) {
-            tags.add(tagsArray.getString(i))
-        }
-        
-        val target = try {
-            args.getInteger("target") ?: CloudPushService.DEVICE_TARGET
-        } catch (e: Exception) {
-            CloudPushService.DEVICE_TARGET
-        }
-        val alias = args.getString("alias")
-        
-        pushService?.unbindTag(target, tags.toTypedArray(), alias, object : CommonCallback {
-            override fun onSuccess(response: String?) {
-                Log.d(TAG, "Tags unbound successfully: $response")
-                val result = JSObject()
-                result.put("success", true)
-                result.put("response", response ?: "")
-                invoke.resolve(result)
+        try {
+            val args = invoke.parseArgs(TagsArgs::class.java)
+            
+            if (args?.tags.isNullOrEmpty()) {
+                invoke.reject("Tags are required")
+                return
             }
             
-            override fun onFailed(errorCode: String?, errorMessage: String?) {
-                Log.e(TAG, "Failed to unbind tags: $errorCode - $errorMessage")
-                invoke.reject("Failed to unbind tags: $errorCode - $errorMessage")
-            }
-        })
+            val target = args.target ?: CloudPushService.DEVICE_TARGET
+            val alias = args.alias
+            
+            pushService?.unbindTag(target, args.tags.toTypedArray(), alias, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Tags unbound successfully: $response")
+                    val result = JSObject()
+                    result.put("success", true)
+                    result.put("response", response ?: "")
+                    invoke.resolve(result)
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Failed to unbind tags: $errorCode - $errorMessage")
+                    invoke.reject("Failed to unbind tags: $errorCode - $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse arguments", e)
+            invoke.reject("Invalid arguments: ${e.message}")
+        }
     }
     
     @Command
@@ -247,28 +241,32 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val args = invoke.getObject() ?: JSObject()
-        val alias = args.getString("alias")
-        
-        if (alias.isNullOrEmpty()) {
-            invoke.reject("Alias is required")
-            return
-        }
-        
-        pushService?.addAlias(alias, object : CommonCallback {
-            override fun onSuccess(response: String?) {
-                Log.d(TAG, "Alias bound successfully: $response")
-                val result = JSObject()
-                result.put("success", true)
-                result.put("response", response ?: "")
-                invoke.resolve(result)
+        try {
+            val alias = invoke.parseArgs(AliasArgs::class.java)?.alias
+            
+            if (alias.isNullOrEmpty()) {
+                invoke.reject("Alias is required")
+                return
             }
             
-            override fun onFailed(errorCode: String?, errorMessage: String?) {
-                Log.e(TAG, "Failed to bind alias: $errorCode - $errorMessage")
-                invoke.reject("Failed to bind alias: $errorCode - $errorMessage")
-            }
-        })
+            pushService?.addAlias(alias, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Alias bound successfully: $response")
+                    val result = JSObject()
+                    result.put("success", true)
+                    result.put("response", response ?: "")
+                    invoke.resolve(result)
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Failed to bind alias: $errorCode - $errorMessage")
+                    invoke.reject("Failed to bind alias: $errorCode - $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse arguments", e)
+            invoke.reject("Invalid arguments: ${e.message}")
+        }
     }
     
     @Command
@@ -278,28 +276,32 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val args = invoke.getObject() ?: JSObject()
-        val alias = args.getString("alias")
-        
-        if (alias.isNullOrEmpty()) {
-            invoke.reject("Alias is required")
-            return
-        }
-        
-        pushService?.removeAlias(alias, object : CommonCallback {
-            override fun onSuccess(response: String?) {
-                Log.d(TAG, "Alias unbound successfully: $response")
-                val result = JSObject()
-                result.put("success", true)
-                result.put("response", response ?: "")
-                invoke.resolve(result)
+        try {
+            val alias = invoke.parseArgs(AliasArgs::class.java)?.alias
+            
+            if (alias.isNullOrEmpty()) {
+                invoke.reject("Alias is required")
+                return
             }
             
-            override fun onFailed(errorCode: String?, errorMessage: String?) {
-                Log.e(TAG, "Failed to unbind alias: $errorCode - $errorMessage")
-                invoke.reject("Failed to unbind alias: $errorCode - $errorMessage")
-            }
-        })
+            pushService?.removeAlias(alias, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Alias unbound successfully: $response")
+                    val result = JSObject()
+                    result.put("success", true)
+                    result.put("response", response ?: "")
+                    invoke.resolve(result)
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Failed to unbind alias: $errorCode - $errorMessage")
+                    invoke.reject("Failed to unbind alias: $errorCode - $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse arguments", e)
+            invoke.reject("Invalid arguments: ${e.message}")
+        }
     }
     
     @Command
@@ -309,27 +311,27 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
             return
         }
         
-        val args = invoke.getObject() ?: JSObject()
-        val target = try {
-            args.getInteger("target") ?: CloudPushService.DEVICE_TARGET
-        } catch (e: Exception) {
-            CloudPushService.DEVICE_TARGET
-        }
-        
-        pushService?.listTags(target, object : CommonCallback {
-            override fun onSuccess(response: String?) {
-                Log.d(TAG, "Tags listed successfully: $response")
-                val result = JSObject()
-                result.put("success", true)
-                result.put("tags", response ?: "")
-                invoke.resolve(result)
-            }
+        try {
+            val target = invoke.parseArgs(TargetArgs::class.java)?.target ?: CloudPushService.DEVICE_TARGET
             
-            override fun onFailed(errorCode: String?, errorMessage: String?) {
-                Log.e(TAG, "Failed to list tags: $errorCode - $errorMessage")
-                invoke.reject("Failed to list tags: $errorCode - $errorMessage")
-            }
-        })
+            pushService?.listTags(target, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Tags listed successfully: $response")
+                    val result = JSObject()
+                    result.put("success", true)
+                    result.put("tags", response ?: "")
+                    invoke.resolve(result)
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Failed to list tags: $errorCode - $errorMessage")
+                    invoke.reject("Failed to list tags: $errorCode - $errorMessage")
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse arguments", e)
+            invoke.reject("Invalid arguments: ${e.message}")
+        }
     }
     
     @Command
@@ -439,3 +441,27 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
         trigger("pushNotification", data)
     }
 }
+
+// Data classes for command arguments
+data class InitializeArgs(
+    val appKey: String,
+    val appSecret: String
+)
+
+data class AccountArgs(
+    val account: String
+)
+
+data class AliasArgs(
+    val alias: String
+)
+
+data class TagsArgs(
+    val tags: List<String>,
+    val target: Int? = null,
+    val alias: String? = null
+)
+
+data class TargetArgs(
+    val target: Int? = null
+)
