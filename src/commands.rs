@@ -75,6 +75,47 @@ pub(crate) async fn unbind_alias<R: Runtime>(
     app.aliyun_push().unbind_alias(alias)
 }
 
+#[cfg(mobile)]
+#[command]
+pub(crate) async fn list_tags<R: Runtime>(
+    app: AppHandle<R>,
+    target: Option<i32>,
+) -> Result<TagListResponse> {
+    app.aliyun_push().list_tags(target)
+}
+
+#[cfg(mobile)]
+#[command]
+pub(crate) async fn turn_on_push_channel<R: Runtime>(
+    app: AppHandle<R>,
+) -> Result<OperationResponse> {
+    app.aliyun_push().turn_on_push_channel()
+}
+
+#[cfg(mobile)]
+#[command]
+pub(crate) async fn turn_off_push_channel<R: Runtime>(
+    app: AppHandle<R>,
+) -> Result<OperationResponse> {
+    app.aliyun_push().turn_off_push_channel()
+}
+
+#[cfg(mobile)]
+#[command]
+pub(crate) async fn check_push_channel_status<R: Runtime>(
+    app: AppHandle<R>,
+) -> Result<ChannelStatusResponse> {
+    app.aliyun_push().check_push_channel_status()
+}
+
+#[cfg(mobile)]
+#[command]
+pub(crate) async fn request_notification_permission<R: Runtime>(
+    app: AppHandle<R>,
+) -> Result<serde_json::Value> {
+    app.aliyun_push().request_notification_permission()
+}
+
 // Desktop stub implementations
 #[cfg(desktop)]
 #[command]
@@ -143,5 +184,46 @@ pub(crate) async fn unbind_alias<R: Runtime>(
     _app: AppHandle<R>,
     _alias: String,
 ) -> Result<OperationResponse> {
+    Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
+}
+
+#[cfg(desktop)]
+#[command]
+pub(crate) async fn list_tags<R: Runtime>(
+    _app: AppHandle<R>,
+    _target: Option<i32>,
+) -> Result<TagListResponse> {
+    Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
+}
+
+#[cfg(desktop)]
+#[command]
+pub(crate) async fn turn_on_push_channel<R: Runtime>(
+    _app: AppHandle<R>,
+) -> Result<OperationResponse> {
+    Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
+}
+
+#[cfg(desktop)]
+#[command]
+pub(crate) async fn turn_off_push_channel<R: Runtime>(
+    _app: AppHandle<R>,
+) -> Result<OperationResponse> {
+    Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
+}
+
+#[cfg(desktop)]
+#[command]
+pub(crate) async fn check_push_channel_status<R: Runtime>(
+    _app: AppHandle<R>,
+) -> Result<ChannelStatusResponse> {
+    Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
+}
+
+#[cfg(desktop)]
+#[command]
+pub(crate) async fn request_notification_permission<R: Runtime>(
+    _app: AppHandle<R>,
+) -> Result<serde_json::Value> {
     Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
 }

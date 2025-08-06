@@ -1,3 +1,17 @@
 [default]
 description = "Default permissions for the plugin"
-permissions = ["allow-ping"]
+permissions = [
+  "allow-initialize",
+  "allow-get-device-id",
+  "allow-bind-account",
+  "allow-unbind-account",
+  "allow-bind-tag",
+  "allow-unbind-tag",
+  "allow-bind-alias",
+  "allow-unbind-alias",
+  "allow-list-tags",
+  "allow-turn-on-push-channel",
+  "allow-turn-off-push-channel",
+  "allow-check-push-channel-status",
+  "allow-request-notification-permission"
+]

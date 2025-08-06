@@ -44,6 +44,11 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
       commands::unbind_tag,
       commands::bind_alias,
       commands::unbind_alias,
+      commands::list_tags,
+      commands::turn_on_push_channel,
+      commands::turn_off_push_channel,
+      commands::check_push_channel_status,
+      commands::request_notification_permission,
     ])
     .setup(|app, api| {
       #[cfg(mobile)]

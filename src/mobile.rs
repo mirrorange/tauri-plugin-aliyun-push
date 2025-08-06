@@ -80,4 +80,43 @@ impl<R: Runtime> AliyunPush<R> {
       .run_mobile_plugin("unbindAlias", AliasRequest { alias })
       .map_err(Into::into)
   }
+  
+  pub fn list_tags(&self, target: Option<i32>) -> crate::Result<TagListResponse> {
+    #[derive(serde::Serialize)]
+    struct ListTagsRequest {
+      target: i32,
+    }
+    self
+      .0
+      .run_mobile_plugin("listTags", ListTagsRequest { target: target.unwrap_or(1) })
+      .map_err(Into::into)
+  }
+  
+  pub fn turn_on_push_channel(&self) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("turnOnPushChannel", ())
+      .map_err(Into::into)
+  }
+  
+  pub fn turn_off_push_channel(&self) -> crate::Result<OperationResponse> {
+    self
+      .0
+      .run_mobile_plugin("turnOffPushChannel", ())
+      .map_err(Into::into)
+  }
+  
+  pub fn check_push_channel_status(&self) -> crate::Result<ChannelStatusResponse> {
+    self
+      .0
+      .run_mobile_plugin("checkPushChannelStatus", ())
+      .map_err(Into::into)
+  }
+  
+  pub fn request_notification_permission(&self) -> crate::Result<serde_json::Value> {
+    self
+      .0
+      .run_mobile_plugin("requestNotificationPermission", ())
+      .map_err(Into::into)
+  }
 }
