@@ -2,6 +2,7 @@ package com.mirrorange.plugin.aliyunpush
 
 import android.app.Activity
 import android.app.Application
+import android.webkit.WebView
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -30,8 +31,8 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
         fun getInstance(): AliyunPushPlugin? = instance
     }
     
-    override fun load() {
-        super.load()
+    override fun load(webView: WebView) {
+        super.load(webView)
         instance = this
         // Get the push service from Application
         pushService = AliyunPushApplication.getPushService()

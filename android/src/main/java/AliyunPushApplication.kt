@@ -14,7 +14,7 @@ class AliyunPushApplication : Application() {
         private const val TAG = "AliyunPushApplication"
         private var pushService: CloudPushService? = null
         private var isInitialized = false
-        private var deviceId: String? = null
+        private var pushDeviceId: String? = null
         
         // 在这里配置您的 AppKey 和 AppSecret
         // TODO: 请替换为您的实际 AppKey 和 AppSecret
@@ -23,7 +23,7 @@ class AliyunPushApplication : Application() {
         
         fun getPushService(): CloudPushService? = pushService
         fun isInitialized(): Boolean = isInitialized
-        fun getDeviceId(): String? = deviceId
+        fun getDeviceId(): String? = pushDeviceId
     }
     
     override fun onCreate() {
@@ -72,7 +72,7 @@ class AliyunPushApplication : Application() {
             pushService?.register(applicationContext, object : CommonCallback {
                 override fun onSuccess(response: String?) {
                     Log.d(TAG, "Push registration successful: $response")
-                    deviceId = pushService?.deviceId
+                    pushDeviceId = pushService?.deviceId
                     isInitialized = true
                     Log.i(TAG, "Device ID: $deviceId")
                 }
@@ -85,17 +85,6 @@ class AliyunPushApplication : Application() {
             
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize push service", e)
-        }
-    }
-    
-    private fun getProcessName(): String? {
-        return try {
-            val pid = android.os.Process.myPid()
-            val manager = getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
-            manager.runningAppProcesses?.find { it.pid == pid }?.processName
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get process name", e)
-            null
         }
     }
 }
