@@ -23,65 +23,64 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     private val TAG = "AliyunPushPlugin"
     private var pushService: CloudPushService? = null
-    private var isInitialized = false
     
     companion object {
-        private var appKey: String? = null
-        private var appSecret: String? = null
-        private var deviceId: String? = null
-        private var pushCallback: ((String, String?, Map<String, String>?) -> Unit)? = null
+        private var instance: AliyunPushPlugin? = null
+        
+        fun getInstance(): AliyunPushPlugin? = instance
+    }
+    
+    override fun load() {
+        super.load()
+        instance = this
+        // Get the push service from Application
+        pushService = AliyunPushApplication.getPushService()
     }
     
     @Command
     fun initialize(invoke: Invoke) {
         try {
-            // In Tauri V2, arguments are passed as properties on the invoke object
             val args = invoke.parseArgs(InitializeArgs::class.java)
-            appKey = args?.appKey
-            appSecret = args?.appSecret
+            val appKey = args?.appKey
+            val appSecret = args?.appSecret
             
             if (appKey.isNullOrEmpty() || appSecret.isNullOrEmpty()) {
                 invoke.reject("AppKey and AppSecret are required")
                 return
             }
             
-            val application = activity.application
+            // Check if already initialized
+            if (AliyunPushApplication.isInitialized()) {
+                val result = JSObject()
+                result.put("success", true)
+                result.put("deviceId", AliyunPushApplication.getDeviceId() ?: "")
+                result.put("response", "Already initialized")
+                invoke.resolve(result)
+                return
+            }
             
-            // Configure push initialization
-            val pushInitConfig = PushInitConfig.Builder()
-                .application(application)
-                .appKey(appKey)
-                .appSecret(appSecret)
-                .disableChannelProcess(false)
-                .disableChannelProcessHeartbeat(false)
-                .build()
-            
-            // Initialize Push SDK
-            PushServiceFactory.init(pushInitConfig)
-            pushService = PushServiceFactory.getCloudPushService()
-            
-            // Enable debug logging
-            pushService?.setLogLevel(CloudPushService.LOG_DEBUG)
-            
-            // Register with push service
-            pushService?.register(activity.applicationContext, object : CommonCallback {
-                override fun onSuccess(response: String?) {
-                    Log.d(TAG, "Push registration successful: $response")
-                    deviceId = pushService?.deviceId
-                    isInitialized = true
+            // Initialize with the provided config
+            AliyunPushApplication.initializeWithConfig(
+                activity.applicationContext,
+                appKey,
+                appSecret,
+                object : CommonCallback {
+                    override fun onSuccess(response: String?) {
+                        Log.d(TAG, "Push registration successful: $response")
+                        
+                        val result = JSObject()
+                        result.put("success", true)
+                        result.put("deviceId", AliyunPushApplication.getDeviceId() ?: "")
+                        result.put("response", response ?: "")
+                        invoke.resolve(result)
+                    }
                     
-                    val result = JSObject()
-                    result.put("success", true)
-                    result.put("deviceId", deviceId ?: "")
-                    result.put("response", response ?: "")
-                    invoke.resolve(result)
+                    override fun onFailed(errorCode: String?, errorMessage: String?) {
+                        Log.e(TAG, "Push registration failed: $errorCode - $errorMessage")
+                        invoke.reject("Registration failed: $errorCode - $errorMessage")
+                    }
                 }
-                
-                override fun onFailed(errorCode: String?, errorMessage: String?) {
-                    Log.e(TAG, "Push registration failed: $errorCode - $errorMessage")
-                    invoke.reject("Registration failed: $errorCode - $errorMessage")
-                }
-            })
+            )
             
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize push service", e)
@@ -91,19 +90,19 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun getDeviceId(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
         
         val result = JSObject()
-        result.put("deviceId", deviceId ?: "")
+        result.put("deviceId", AliyunPushApplication.getDeviceId() ?: "")
         invoke.resolve(result)
     }
     
     @Command
     fun bindAccount(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -138,7 +137,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun unbindAccount(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -161,7 +160,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun bindTag(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -199,7 +198,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun unbindTag(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -237,7 +236,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun bindAlias(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -272,7 +271,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun unbindAlias(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -307,7 +306,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun listTags(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -337,7 +336,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun turnOnPushChannel(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -360,7 +359,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun turnOffPushChannel(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }
@@ -383,7 +382,7 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     
     @Command
     fun checkPushChannelStatus(invoke: Invoke) {
-        if (!isInitialized) {
+        if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
             return
         }

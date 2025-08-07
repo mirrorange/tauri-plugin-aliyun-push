@@ -106,18 +106,9 @@ class AliyunPushMessageReceiver : MessageReceiver() {
     
     private fun notifyPlugin(type: String, title: String?, content: String?, extraMap: Map<String, String>?) {
         try {
-            // Try to get the plugin instance and notify it
-            // This is a simplified approach - in production you might want to use a more robust method
-            val pluginClass = Class.forName("com.mirrorange.plugin.aliyunpush.AliyunPushPlugin")
-            val companionField = pluginClass.getDeclaredField("Companion")
-            companionField.isAccessible = true
-            val companion = companionField.get(null)
-            
-            val companionClass = companion.javaClass
-            val method = companionClass.getDeclaredMethod("handlePushNotification", 
-                String::class.java, String::class.java, String::class.java, Map::class.java)
-            method.isAccessible = true
-            method.invoke(companion, type, title, content, extraMap)
+            // Get the plugin instance and notify it
+            AliyunPushPlugin.getInstance()?.handlePushNotification(type, title, content, extraMap)
+                ?: Log.w(TAG, "Plugin instance not available yet")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to notify plugin", e)
         }

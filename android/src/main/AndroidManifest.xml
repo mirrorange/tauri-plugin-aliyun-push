@@ -11,4 +11,31 @@
     
     <!-- Optional: For vibration feedback -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <application>
+        <!-- Register custom Application class -->
+        <!-- Note: The actual application class registration should be done in the app's main AndroidManifest.xml -->
+        
+        <!-- Register MessageReceiver for handling push notifications -->
+        <receiver
+            android:name=".AliyunPushMessageReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.alibaba.sdk.android.push.RECEIVE" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Optional: Configure AppKey and AppSecret here if not using code configuration -->
+        <!-- Uncomment and fill in your actual values -->
+        <!--
+        <meta-data android:name="com.alibaba.app.appkey" android:value="YOUR_APP_KEY"/>
+        <meta-data android:name="com.alibaba.app.appsecret" android:value="YOUR_APP_SECRET"/>
+        -->
+    </application>
 </manifest>
