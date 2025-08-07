@@ -7,15 +7,6 @@ use crate::AliyunPushExt;
 
 #[cfg(mobile)]
 #[command]
-pub(crate) async fn initialize<R: Runtime>(
-    app: AppHandle<R>,
-    config: InitializeConfig,
-) -> Result<InitializeResponse> {
-    app.aliyun_push().initialize(config)
-}
-
-#[cfg(mobile)]
-#[command]
 pub(crate) async fn get_device_id<R: Runtime>(
     app: AppHandle<R>,
 ) -> Result<DeviceIdResponse> {
@@ -117,15 +108,6 @@ pub(crate) async fn request_notification_permission<R: Runtime>(
 }
 
 // Desktop stub implementations
-#[cfg(desktop)]
-#[command]
-pub(crate) async fn initialize<R: Runtime>(
-    _app: AppHandle<R>,
-    _config: InitializeConfig,
-) -> Result<InitializeResponse> {
-    Err(crate::Error::Msg("Aliyun Push is only available on mobile platforms".to_string()))
-}
-
 #[cfg(desktop)]
 #[command]
 pub(crate) async fn get_device_id<R: Runtime>(

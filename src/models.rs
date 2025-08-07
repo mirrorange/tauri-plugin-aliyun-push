@@ -1,20 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct InitializeConfig {
-    pub app_key: String,
-    pub app_secret: String,
-}
-
-#[derive(Debug, Clone, Default, Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct InitializeResponse {
-    pub success: bool,
-    pub device_id: String,
-    pub response: String,
-}
-
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DeviceIdResponse {

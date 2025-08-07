@@ -36,7 +36,6 @@ impl<R: Runtime, T: Manager<R>> crate::AliyunPushExt<R> for T {
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
   Builder::new("aliyun-push")
     .invoke_handler(tauri::generate_handler![
-      commands::initialize,
       commands::get_device_id,
       commands::bind_account,
       commands::unbind_account,

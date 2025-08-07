@@ -15,39 +15,15 @@ class AliyunPushApplication : Application() {
         private var pushService: CloudPushService? = null
         private var isInitialized = false
         private var deviceId: String? = null
-        private var appKey: String? = null
-        private var appSecret: String? = null
+        
+        // 在这里配置您的 AppKey 和 AppSecret
+        // TODO: 请替换为您的实际 AppKey 和 AppSecret
+        private const val APP_KEY = "YOUR_APP_KEY"
+        private const val APP_SECRET = "YOUR_APP_SECRET"
         
         fun getPushService(): CloudPushService? = pushService
         fun isInitialized(): Boolean = isInitialized
         fun getDeviceId(): String? = deviceId
-        
-        fun initializeWithConfig(context: Context, key: String, secret: String, callback: CommonCallback?) {
-            if (isInitialized && appKey == key && appSecret == secret) {
-                // Already initialized with same config
-                callback?.onSuccess("Already initialized")
-                return
-            }
-            
-            appKey = key
-            appSecret = secret
-            
-            // Register with push service
-            pushService?.register(context, object : CommonCallback {
-                override fun onSuccess(response: String?) {
-                    Log.d(TAG, "Push registration successful: $response")
-                    deviceId = pushService?.deviceId
-                    isInitialized = true
-                    callback?.onSuccess(response)
-                }
-                
-                override fun onFailed(errorCode: String?, errorMessage: String?) {
-                    Log.e(TAG, "Push registration failed: $errorCode - $errorMessage")
-                    isInitialized = false
-                    callback?.onFailed(errorCode, errorMessage)
-                }
-            })
-        }
     }
     
     override fun onCreate() {
@@ -68,45 +44,44 @@ class AliyunPushApplication : Application() {
         try {
             Log.d(TAG, "Initializing Push SDK")
             
-            // First check if AppKey and AppSecret are provided in AndroidManifest
-            val appInfo = packageManager.getApplicationInfo(packageName, android.content.pm.PackageManager.GET_META_DATA)
-            val metaData = appInfo.metaData
-            
-            if (metaData != null) {
-                val manifestAppKey = metaData.getString("com.alibaba.app.appkey")
-                val manifestAppSecret = metaData.getString("com.alibaba.app.appsecret")
-                
-                if (!manifestAppKey.isNullOrEmpty() && !manifestAppSecret.isNullOrEmpty()) {
-                    // Use manifest configuration
-                    appKey = manifestAppKey
-                    appSecret = manifestAppSecret
-                    
-                    val pushInitConfig = PushInitConfig.Builder()
-                        .application(this)
-                        .appKey(manifestAppKey)
-                        .appSecret(manifestAppSecret)
-                        .disableChannelProcess(false)
-                        .disableChannelProcessHeartbeat(false)
-                        .build()
-                    
-                    PushServiceFactory.init(pushInitConfig)
-                    Log.d(TAG, "Push SDK initialized with manifest config")
-                } else {
-                    // Initialize without config, will configure later
-                    PushServiceFactory.init(this)
-                    Log.d(TAG, "Push SDK initialized without config")
-                }
-            } else {
-                // Initialize without config, will configure later
-                PushServiceFactory.init(this)
-                Log.d(TAG, "Push SDK initialized without config")
+            // Check if APP_KEY and APP_SECRET are configured
+            if (APP_KEY == "YOUR_APP_KEY" || APP_SECRET == "YOUR_APP_SECRET") {
+                Log.e(TAG, "Please configure APP_KEY and APP_SECRET in AliyunPushApplication.kt")
+                return
             }
             
+            // Configure push initialization
+            val pushInitConfig = PushInitConfig.Builder()
+                .application(this)
+                .appKey(APP_KEY)
+                .appSecret(APP_SECRET)
+                .disableChannelProcess(false)
+                .disableChannelProcessHeartbeat(false)
+                .build()
+            
+            // Initialize Push SDK
+            PushServiceFactory.init(pushInitConfig)
             pushService = PushServiceFactory.getCloudPushService()
             
             // Enable debug logging
-            // Note: You can control this based on your app's build configuration
             pushService?.setLogLevel(CloudPushService.LOG_DEBUG)
+            
+            Log.d(TAG, "Push SDK initialized successfully")
+            
+            // Register with push service
+            pushService?.register(applicationContext, object : CommonCallback {
+                override fun onSuccess(response: String?) {
+                    Log.d(TAG, "Push registration successful: $response")
+                    deviceId = pushService?.deviceId
+                    isInitialized = true
+                    Log.i(TAG, "Device ID: $deviceId")
+                }
+                
+                override fun onFailed(errorCode: String?, errorMessage: String?) {
+                    Log.e(TAG, "Push registration failed: $errorCode - $errorMessage")
+                    isInitialized = false
+                }
+            })
             
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize push service", e)

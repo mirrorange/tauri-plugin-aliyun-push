@@ -38,57 +38,6 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
     }
     
     @Command
-    fun initialize(invoke: Invoke) {
-        try {
-            val args = invoke.parseArgs(InitializeArgs::class.java)
-            val appKey = args?.appKey
-            val appSecret = args?.appSecret
-            
-            if (appKey.isNullOrEmpty() || appSecret.isNullOrEmpty()) {
-                invoke.reject("AppKey and AppSecret are required")
-                return
-            }
-            
-            // Check if already initialized
-            if (AliyunPushApplication.isInitialized()) {
-                val result = JSObject()
-                result.put("success", true)
-                result.put("deviceId", AliyunPushApplication.getDeviceId() ?: "")
-                result.put("response", "Already initialized")
-                invoke.resolve(result)
-                return
-            }
-            
-            // Initialize with the provided config
-            AliyunPushApplication.initializeWithConfig(
-                activity.applicationContext,
-                appKey,
-                appSecret,
-                object : CommonCallback {
-                    override fun onSuccess(response: String?) {
-                        Log.d(TAG, "Push registration successful: $response")
-                        
-                        val result = JSObject()
-                        result.put("success", true)
-                        result.put("deviceId", AliyunPushApplication.getDeviceId() ?: "")
-                        result.put("response", response ?: "")
-                        invoke.resolve(result)
-                    }
-                    
-                    override fun onFailed(errorCode: String?, errorMessage: String?) {
-                        Log.e(TAG, "Push registration failed: $errorCode - $errorMessage")
-                        invoke.reject("Registration failed: $errorCode - $errorMessage")
-                    }
-                }
-            )
-            
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to initialize push service", e)
-            invoke.reject("Failed to initialize: ${e.message}")
-        }
-    }
-    
-    @Command
     fun getDeviceId(invoke: Invoke) {
         if (!AliyunPushApplication.isInitialized()) {
             invoke.reject("Push service not initialized")
@@ -443,12 +392,6 @@ class AliyunPushPlugin(private val activity: Activity): Plugin(activity) {
 }
 
 // Data classes for command arguments
-@InvokeArg
-class InitializeArgs {
-    lateinit var appKey: String
-    lateinit var appSecret: String
-}
-
 @InvokeArg
 class AccountArgs {
     lateinit var account: String

@@ -25,13 +25,6 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct AliyunPush<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> AliyunPush<R> {
-  pub fn initialize(&self, config: InitializeConfig) -> crate::Result<InitializeResponse> {
-    self
-      .0
-      .run_mobile_plugin("initialize", config)
-      .map_err(Into::into)
-  }
-  
   pub fn get_device_id(&self) -> crate::Result<DeviceIdResponse> {
     self
       .0

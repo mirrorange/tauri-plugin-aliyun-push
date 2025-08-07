@@ -1,17 +1,6 @@
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 
-export interface InitializeConfig extends Record<string, unknown> {
-  appKey: string
-  appSecret: string
-}
-
-export interface InitializeResponse extends Record<string, unknown> {
-  success: boolean
-  deviceId: string
-  response: string
-}
-
 export interface DeviceIdResponse extends Record<string, unknown> {
   deviceId: string
 }
@@ -47,15 +36,6 @@ export interface TagListResponse extends Record<string, unknown> {
 export const TARGET_DEVICE = 1
 export const TARGET_ACCOUNT = 2
 export const TARGET_ALIAS = 3
-
-/**
- * Initialize Aliyun Push SDK with app credentials
- * @param config - Configuration containing appKey and appSecret
- * @returns Promise with initialization response including device ID
- */
-export async function initialize(config: InitializeConfig): Promise<InitializeResponse> {
-  return await invoke<InitializeResponse>('plugin:aliyun-push|initialize', { config })
-}
 
 /**
  * Get the device ID assigned by Aliyun Push
@@ -175,7 +155,6 @@ export async function onPushNotification(
 }
 
 export default {
-  initialize,
   getDeviceId,
   bindAccount,
   unbindAccount,
