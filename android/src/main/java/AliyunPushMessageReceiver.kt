@@ -16,12 +16,12 @@ class AliyunPushMessageReceiver : MessageReceiver() {
         summary: String?,
         extraMap: MutableMap<String, String>?
     ) {
-        Log.d(TAG, "Received notification - Title: $title, Summary: $summary")
+        Log.i(TAG, "Received notification - Title: $title, Summary: $summary")
         notifyPlugin("notification", title, summary, extraMap)
     }
     
     override fun onMessage(context: Context?, cPushMessage: CPushMessage?) {
-        Log.d(TAG, "Received message - Title: ${cPushMessage?.title}, Content: ${cPushMessage?.content}")
+        Log.i(TAG, "Received message - Title: ${cPushMessage?.title}, Content: ${cPushMessage?.content}")
         val extraMap = mutableMapOf<String, String>()
         cPushMessage?.let {
             extraMap["messageId"] = it.messageId ?: ""
@@ -36,7 +36,7 @@ class AliyunPushMessageReceiver : MessageReceiver() {
         summary: String?,
         extraMap: String?
     ) {
-        Log.d(TAG, "Notification opened - Title: $title, Summary: $summary")
+        Log.i(TAG, "Notification opened - Title: $title, Summary: $summary")
         val map = parseExtraMap(extraMap)
         notifyPlugin("notificationOpened", title, summary, map)
     }
@@ -47,7 +47,7 @@ class AliyunPushMessageReceiver : MessageReceiver() {
         summary: String?,
         extraMap: String?
     ) {
-        Log.d(TAG, "Notification clicked with no action - Title: $title, Summary: $summary")
+        Log.i(TAG, "Notification clicked with no action - Title: $title, Summary: $summary")
         val map = parseExtraMap(extraMap)
         notifyPlugin("notificationClicked", title, summary, map)
     }
@@ -61,7 +61,7 @@ class AliyunPushMessageReceiver : MessageReceiver() {
         openActivity: String?,
         openUrl: String?
     ) {
-        Log.d(TAG, "Notification received in app - Title: $title, Summary: $summary")
+        Log.i(TAG, "Notification received in app - Title: $title, Summary: $summary")
         val map = extraMap?.toMutableMap() ?: mutableMapOf()
         map["openType"] = openType.toString()
         map["openActivity"] = openActivity ?: ""
@@ -70,7 +70,7 @@ class AliyunPushMessageReceiver : MessageReceiver() {
     }
     
     override fun onNotificationRemoved(context: Context?, messageId: String?) {
-        Log.d(TAG, "Notification removed - MessageId: $messageId")
+        Log.i(TAG, "Notification removed - MessageId: $messageId")
         val map = mutableMapOf<String, String>()
         map["messageId"] = messageId ?: ""
         notifyPlugin("notificationRemoved", null, null, map)
