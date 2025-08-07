@@ -1,5 +1,4 @@
-import { invoke } from '@tauri-apps/api/core'
-import { listen, type UnlistenFn } from '@tauri-apps/api/event'
+import { invoke, addPluginListener, type PluginListener } from '@tauri-apps/api/core'
 
 export interface DeviceIdResponse extends Record<string, unknown> {
   deviceId: string
@@ -144,14 +143,18 @@ export async function requestNotificationPermission(): Promise<{ requested: bool
 /**
  * Listen for push notifications
  * @param callback - Callback function to handle push notifications
- * @returns Promise with unlisten function
+ * @returns Promise with plugin listener that can be used to unlisten
  */
 export async function onPushNotification(
   callback: (notification: PushNotification) => void
-): Promise<UnlistenFn> {
-  return await listen<PushNotification>('pushNotification', (event) => {
-    callback(event.payload)
-  })
+): Promise<PluginListener> {
+  return await addPluginListener(
+    'aliyun-push',
+    'pushNotification',
+    (event: PushNotification) => {
+      callback(event)
+    }
+  )
 }
 
 export default {

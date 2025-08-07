@@ -11,7 +11,9 @@ const COMMANDS: &[&str] = &[
   "turn_on_push_channel",
   "turn_off_push_channel",
   "check_push_channel_status",
-  "request_notification_permission"
+  "request_notification_permission",
+  "registerListener",
+  "remove_listener"
 ];
 
 fn main() {

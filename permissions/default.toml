@@ -1,7 +1,6 @@
 [default]
 description = "Default permissions for the plugin"
 permissions = [
-  "allow-initialize",
   "allow-get-device-id",
   "allow-bind-account",
   "allow-unbind-account",
@@ -13,5 +12,7 @@ permissions = [
   "allow-turn-on-push-channel",
   "allow-turn-off-push-channel",
   "allow-check-push-channel-status",
-  "allow-request-notification-permission"
+  "allow-request-notification-permission",
+  "allow-registerListener",
+  "allow-remove-listener"
 ]
