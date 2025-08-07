@@ -54,7 +54,7 @@ export const TARGET_ALIAS = 3
  * @returns Promise with initialization response including device ID
  */
 export async function initialize(config: InitializeConfig): Promise<InitializeResponse> {
-  return await invoke<InitializeResponse>('plugin:aliyun-push|initialize', config)
+  return await invoke<InitializeResponse>('plugin:aliyun-push|initialize', { config })
 }
 
 /**
@@ -88,7 +88,7 @@ export async function unbindAccount(): Promise<OperationResponse> {
  * @returns Promise with operation response
  */
 export async function bindTag(request: TagRequest): Promise<OperationResponse> {
-  return await invoke<OperationResponse>('plugin:aliyun-push|bind_tag', request)
+  return await invoke<OperationResponse>('plugin:aliyun-push|bind_tag', { request })
 }
 
 /**
@@ -97,7 +97,7 @@ export async function bindTag(request: TagRequest): Promise<OperationResponse> {
  * @returns Promise with operation response
  */
 export async function unbindTag(request: TagRequest): Promise<OperationResponse> {
-  return await invoke<OperationResponse>('plugin:aliyun-push|unbind_tag', request)
+  return await invoke<OperationResponse>('plugin:aliyun-push|unbind_tag', { request })
 }
 
 /**
