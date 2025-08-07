@@ -4,7 +4,6 @@ Default permissions for the plugin
 
 #### This default permission set includes the following:
 
-- `allow-initialize`
 - `allow-get-device-id`
 - `allow-bind-account`
 - `allow-unbind-account`
@@ -17,6 +16,8 @@ Default permissions for the plugin
 - `allow-turn-off-push-channel`
 - `allow-check-push-channel-status`
 - `allow-request-notification-permission`
+- `allow-registerListener`
+- `allow-remove-listener`
 
 ## Permission Table
 
@@ -231,6 +232,58 @@ Enables the ping command without any pre-configured scope.
 <td>
 
 Denies the ping command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`aliyun-push:allow-registerListener`
+
+</td>
+<td>
+
+Enables the registerListener command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`aliyun-push:deny-registerListener`
+
+</td>
+<td>
+
+Denies the registerListener command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`aliyun-push:allow-remove-listener`
+
+</td>
+<td>
+
+Enables the remove_listener command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`aliyun-push:deny-remove-listener`
+
+</td>
+<td>
+
+Denies the remove_listener command without any pre-configured scope.
 
 </td>
 </tr>
