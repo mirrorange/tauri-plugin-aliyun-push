@@ -16,3 +16,4 @@ thiserror = "2"
 
 [build-dependencies]
 tauri-plugin = { version = "2.3.1", features = ["build"] }
+tauri-build = "2.3.1"
